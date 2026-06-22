@@ -1,5 +1,5 @@
 import { useEffect } from 'react'
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
+import { HashRouter, Routes, Route, Navigate } from 'react-router-dom'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { Navbar } from '@/components/layout/Navbar'
 import { MapPage } from '@/pages/MapPage'
@@ -57,9 +57,9 @@ function AppInner() {
 export default function App() {
   return (
     <QueryClientProvider client={qc}>
-      <BrowserRouter>
+      <HashRouter>
         <AppInner />
-      </BrowserRouter>
+      </HashRouter>
     </QueryClientProvider>
   )
 }
