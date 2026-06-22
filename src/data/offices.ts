@@ -9,6 +9,21 @@ function grid(cols: number, seats: string[]): GridCell[][] {
   return rows
 }
 
+// Rotate a grid 90 degrees counter-clockwise (left)
+function rotate90CCW(rows: GridCell[][]): GridCell[][] {
+  const R = rows.length
+  const C = Math.max(...rows.map(r => r.length))
+  const result: GridCell[][] = []
+  for (let i = 0; i < C; i++) {
+    const newRow: GridCell[] = []
+    for (let j = 0; j < R; j++) {
+      newRow.push(rows[j][C - 1 - i] ?? null)
+    }
+    result.push(newRow)
+  }
+  return result
+}
+
 // ─────────────────────────────────────────────
 // 1. 본사 6층 A존  (30석)
 //    A-01 ~ A-30
@@ -203,13 +218,7 @@ const baejae10B: Zone = {
 // 9. 세미콜론 12층  (Tech Project & BAU, ~161석)
 //    C존 (C-01~C-59) + B존 (B-07~B-128)
 // ─────────────────────────────────────────────
-const semicolon12: Zone = {
-  id: 'semicolon-12f',
-  name: '세미콜론 12층 (Tech&BAU)',
-  building: 'semicolon',
-  floor: '12F',
-  capacity: 161,
-  rows: [
+const semicolon12Raw: GridCell[][] = [
     // ── C존 (상단 우측 영역) ──
     ['LABEL:[ C존 ]', null, null, null, null, null, null, null, null, null, null, null],
     // Group C-1 (6석)
@@ -248,7 +257,15 @@ const semicolon12: Zone = {
     ['B-119', 'B-123', 'B-127', null,  null, null, null, null, null, null, null, null],
     ['B-120', 'B-124', 'B-128', null,  null, null, null, null, null, null, null, null],
     ['B-121', 'B-125', null,   null,   null, null, null, null, null, null, null, null],
-  ],
+]
+
+const semicolon12: Zone = {
+  id: 'semicolon-12f',
+  name: '세미콜론 12층 (Tech&BAU)',
+  building: 'semicolon',
+  floor: '12F',
+  capacity: 161,
+  rows: rotate90CCW(semicolon12Raw),
 }
 
 // ─────────────────────────────────────────────
