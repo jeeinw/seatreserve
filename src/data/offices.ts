@@ -9,21 +9,6 @@ function grid(cols: number, seats: string[]): GridCell[][] {
   return rows
 }
 
-// Rotate a grid 90 degrees counter-clockwise (left)
-function rotate90CCW(rows: GridCell[][]): GridCell[][] {
-  const R = rows.length
-  const C = Math.max(...rows.map(r => r.length))
-  const result: GridCell[][] = []
-  for (let i = 0; i < C; i++) {
-    const newRow: GridCell[] = []
-    for (let j = 0; j < R; j++) {
-      newRow.push(rows[j][C - 1 - i] ?? null)
-    }
-    result.push(newRow)
-  }
-  return result
-}
-
 // ─────────────────────────────────────────────
 // 1. 본사 6층 A존  (30석)
 //    A-01 ~ A-30
@@ -215,57 +200,92 @@ const baejae10B: Zone = {
 }
 
 // ─────────────────────────────────────────────
-// 9. 세미콜론 12층  (Tech Project & BAU, ~161석)
-//    C존 (C-01~C-59) + B존 (B-07~B-128)
+// 9. 세미콜론 12층  (Tech Project & BAU, 187석)
+//    도면 그대로 (가로/landscape) 재현
+//    B존 B-001 ~ B-128 (128석),  C존 C-001 ~ C-059 (59석)
+//    좌측: 회의실 ×2 + 캔틴1,  상단: Main Gate,
+//    중앙: 회의실 ×2,  우측: 회의실2
 // ─────────────────────────────────────────────
-const semicolon12Raw: GridCell[][] = [
-    // ── C존 (상단 우측 영역) ──
-    ['LABEL:[ C존 ]', null, null, null, null, null, null, null, null, null, null, null],
-    // Group C-1 (6석)
-    ['C-01', 'C-02', 'C-03', null, 'C-04', 'C-05', 'C-06', null, null, null, null, null],
-    ['C-07', 'C-08', 'C-09', null, 'C-10', 'C-11', 'C-12', null, null, null, null, null],
-    // Group C-2 (12석)
-    ['C-13', 'C-14', 'C-15', null, 'C-16', 'C-17', 'C-18', null, null, null, null, null],
-    ['C-19', 'C-20', 'C-21', null, 'C-22', 'C-23', 'C-24', null, null, null, null, null],
-    // Group C-3
-    ['C-25', 'C-26', 'C-27', null, 'C-28', 'C-29', null,   null, null, null, null, null],
-    [null,   null,   null,   null, null,   null,   null,   null, null, null, null, null],
-    // Group C-4 (large block right)
-    ['C-30', 'C-33', 'C-37', 'C-41', 'C-45', 'C-49', 'C-53', 'C-57', null, 'C-36', 'C-40', 'C-44'],
-    ['C-31', 'C-34', 'C-38', 'C-42', 'C-46', 'C-50', 'C-54', 'C-58', null, 'C-48', 'C-52', 'C-56'],
-    ['C-32', 'C-35', 'C-39', 'C-43', 'C-47', 'C-51', 'C-55', 'C-59', null, null,   null,   null  ],
-    [null, null, null, null, null, null, null, null, null, null, null, null],
-    // ── B존 (하단 영역) ──
-    ['LABEL:[ B존 ]', null, null, null, null, null, null, null, null, null, null, null],
-    // Upper B cluster
-    ['B-07', 'B-13', 'B-20', null, 'B-27', 'B-33', 'B-39', 'B-44', 'B-49', 'B-55', null, null],
-    ['B-08', 'B-14', 'B-21', null, 'B-28', 'B-34', 'B-40', 'B-45', 'B-50', 'B-56', null, null],
-    ['B-09', 'B-15', 'B-22', null, 'B-29', 'B-35', 'B-41', 'B-46', 'B-51', null,   null, null],
-    [null, null, null, null, null, null, null, null, null, null, null, null],
-    // Large lower B block - Row 1
-    ['B-10', 'B-16', 'B-23', 'B-29', 'B-35', 'B-41', 'B-46', 'B-51', 'B-57', 'B-61', 'B-65', 'B-69'],
-    ['B-11', 'B-17', 'B-24', 'B-30', 'B-36', 'B-42', 'B-47', 'B-52', 'B-58', 'B-62', 'B-66', 'B-70'],
-    ['B-12', 'B-18', 'B-25', 'B-31', 'B-37', 'B-43', 'B-48', 'B-53', 'B-59', 'B-63', 'B-67', 'B-71'],
-    ['null', 'B-19', 'B-26', 'B-32', 'B-38', null,   null,   'B-60', null,   'B-64', 'B-68', null  ],
-    // Row 2 (extending right)
-    ['B-72', 'B-76', 'B-80', 'B-84', 'B-88', 'B-91', 'B-95', 'B-99',  'B-103', 'B-107', 'B-110', 'B-114'],
-    ['B-73', 'B-77', 'B-81', 'B-85', 'B-89', 'B-92', 'B-96', 'B-100', 'B-104', 'B-108', 'B-111', 'B-115'],
-    ['B-74', 'B-78', 'B-82', 'B-86', 'B-90', 'B-93', 'B-97', 'B-101', 'B-105', 'B-109', 'B-112', 'B-116'],
-    ['B-75', 'B-79', 'B-83', 'B-87', null,   'B-94', 'B-98', 'B-102', 'B-106', null,    'B-113', 'B-117'],
-    // Row 3
-    ['B-118', 'B-122', null,   null,   null, null, null, null, null, null, null, null],
-    ['B-119', 'B-123', 'B-127', null,  null, null, null, null, null, null, null, null],
-    ['B-120', 'B-124', 'B-128', null,  null, null, null, null, null, null, null, null],
-    ['B-121', 'B-125', null,   null,   null, null, null, null, null, null, null, null],
-]
+function buildSemicolon(): GridCell[][] {
+  const H = 14
+  const W = 48
+  const g: GridCell[][] = Array.from({ length: H }, () => Array<GridCell>(W).fill(null))
+
+  // place a label at a single cell
+  const lbl = (r: number, c: number, t: string) => { g[r][c] = 'LABEL:' + t }
+  // place codes top→down in one sub-column
+  const dn = (r: number, c: number, codes: string[]) =>
+    codes.forEach((code, i) => { g[r + i][c] = code })
+  // place codes left→right in one row (null = skip)
+  const ac = (r: number, c: number, codes: (string | null)[]) =>
+    codes.forEach((code, i) => { if (code !== null) g[r][c + i] = code })
+
+  // ── 상단 우측: C존 C-001 ~ C-029 ──
+  ac(0, 30, ['C-001', 'C-002', 'C-003', null, 'C-004', 'C-005', 'C-006'])
+  ac(1, 30, ['C-007', 'C-008', 'C-009', null, 'C-010', 'C-011', 'C-012'])
+  ac(2, 30, ['C-013', 'C-014', 'C-015', null, 'C-016', 'C-017', 'C-018'])
+  ac(3, 30, ['C-019', 'C-020', 'C-021', null, 'C-022', 'C-023', 'C-024'])
+  ac(4, 30, ['C-025', 'C-026', 'C-027', null, 'C-028', 'C-029'])
+
+  // ── 상단 중앙: 출입구 ──
+  lbl(5, 12, 'Main Gate')
+
+  // ── 좌측 룸: 회의실 ×2 + 캔틴1 ──
+  lbl(6, 1, '회의실')
+  lbl(6, 3, '회의실')
+  lbl(10, 1, '캔틴1')
+
+  // ── 상단 좌/중앙: B존 윗줄 (B-001 ~ B-056) ──
+  dn(6, 6, ['B-001', 'B-002', 'B-003']); dn(6, 7, ['B-007', 'B-008', 'B-009'])
+  dn(6, 9, ['B-013', 'B-014', 'B-015']); dn(6, 10, ['B-020', 'B-021', 'B-022'])
+  dn(6, 12, ['B-027', 'B-028']);         dn(6, 13, ['B-033', 'B-034'])
+  dn(6, 15, ['B-039', 'B-040']);         dn(6, 16, ['B-044', 'B-045'])
+  dn(6, 18, ['B-049', 'B-050']);         dn(6, 19, ['B-055', 'B-056'])
+
+  // ── 중앙 회의실 ×2 ──
+  lbl(7, 21, '회의실')
+  lbl(7, 24, '회의실')
+
+  // ── 중앙 우측: C존 C-030 ~ C-059 ──
+  dn(6, 27, ['C-030', 'C-031', 'C-032']);          dn(6, 28, ['C-033', 'C-034', 'C-035'])
+  dn(6, 30, ['C-036', 'C-037', 'C-038', 'C-039']); dn(6, 31, ['C-040', 'C-041', 'C-042', 'C-043'])
+  dn(6, 33, ['C-044', 'C-045', 'C-046', 'C-047']); dn(6, 34, ['C-048', 'C-049', 'C-050', 'C-051'])
+  dn(6, 36, ['C-052', 'C-053', 'C-054', 'C-055']); dn(6, 37, ['C-056', 'C-057', 'C-058', 'C-059'])
+
+  // ── 우측 룸: 회의실2 ──
+  lbl(7, 42, '회의실2')
+
+  // ── 하단: B존 아랫줄 (B-004 ~ B-128), 전체 폭 ──
+  dn(10, 6, ['B-004', 'B-005', 'B-006']);          dn(10, 7, ['B-010', 'B-011', 'B-012'])
+  dn(10, 9, ['B-016', 'B-017', 'B-018', 'B-019']); dn(10, 10, ['B-023', 'B-024', 'B-025', 'B-026'])
+  dn(10, 12, ['B-029', 'B-030', 'B-031', 'B-032']); dn(10, 13, ['B-035', 'B-036', 'B-037', 'B-038'])
+  dn(10, 15, ['B-041', 'B-042', 'B-043']);         dn(10, 16, ['B-046', 'B-047', 'B-048'])
+  dn(10, 18, ['B-051', 'B-052', 'B-053', 'B-054']); dn(10, 19, ['B-057', 'B-058', 'B-059', 'B-060'])
+  dn(10, 21, ['B-061', 'B-062', 'B-063', 'B-064']); dn(10, 22, ['B-065', 'B-066', 'B-067', 'B-068'])
+  dn(10, 24, ['B-069', 'B-070', 'B-071']);         dn(10, 25, ['B-072', 'B-073', 'B-074', 'B-075'])
+  dn(10, 27, ['B-076', 'B-077', 'B-078', 'B-079']); dn(10, 28, ['B-080', 'B-081', 'B-082', 'B-083'])
+  dn(10, 30, ['B-084', 'B-085', 'B-086', 'B-087']); dn(10, 31, ['B-088', 'B-089', 'B-090'])
+  dn(10, 33, ['B-091', 'B-092', 'B-093', 'B-094']); dn(10, 34, ['B-095', 'B-096', 'B-097', 'B-098'])
+  dn(10, 36, ['B-099', 'B-100', 'B-101', 'B-102']); dn(10, 37, ['B-103', 'B-104', 'B-105', 'B-106'])
+  dn(10, 39, ['B-107', 'B-108', 'B-109', 'B-110']); dn(10, 40, ['B-111', 'B-112', 'B-113'])
+  dn(10, 42, ['B-114', 'B-115', 'B-116', 'B-117']); dn(10, 43, ['B-118', 'B-119', 'B-120', 'B-121'])
+  dn(10, 45, ['B-122', 'B-123', 'B-124', 'B-125']); dn(10, 46, ['B-126', 'B-127', 'B-128'])
+
+  // trim trailing nulls per row to reduce empty width
+  return g.map((row) => {
+    let last = row.length - 1
+    while (last >= 0 && row[last] === null) last--
+    return row.slice(0, last + 1)
+  })
+}
 
 const semicolon12: Zone = {
   id: 'semicolon-12f',
   name: '세미콜론 12층 (Tech&BAU)',
   building: 'semicolon',
   floor: '12F',
-  capacity: 161,
-  rows: rotate90CCW(semicolon12Raw),
+  capacity: 187,
+  rows: buildSemicolon(),
 }
 
 // ─────────────────────────────────────────────

@@ -41,7 +41,7 @@ export function SeatCell({ code, status, onClick, onHover, onLeave }: Props) {
 
 export function LabelCell({ text }: { text: string }) {
   return (
-    <div className="flex items-center justify-center w-20 h-9 text-xs text-gray-400 font-medium border border-dashed border-gray-300 rounded bg-gray-50">
+    <div className="flex items-center justify-center w-12 h-9 px-0.5 text-[9px] leading-tight text-gray-500 font-medium border border-dashed border-gray-300 rounded bg-gray-100 whitespace-nowrap overflow-hidden text-center">
       {text}
     </div>
   )
