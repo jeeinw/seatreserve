@@ -1,0 +1,53 @@
+server:
+  port: 8080
+  servlet:
+    context-path: /api
+
+spring:
+  datasource:
+    url: jdbc:postgresql://${DB_HOST:localhost}:${DB_PORT:5432}/${DB_NAME:seatreserve}
+    username: ${DB_USER:seatreserve}
+    password: ${DB_PASS:changeme}
+    driver-class-name: org.postgresql.Driver
+    hikari:
+      maximum-pool-size: 10
+      connection-timeout: 30000
+
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    show-sql: false
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        format_sql: true
+
+  flyway:
+    enabled: true
+    locations: classpath:db/migration
+    baseline-on-migrate: true
+
+  ldap:
+    # ── 아래 세 줄을 사내 AD/LDAP 실제 값으로 교체하세요 ──
+    urls: ldap://${LDAP_HOST:ldap.company.com}:${LDAP_PORT:389}
+    base: ${LDAP_BASE:dc=company,dc=com}
+    # bind 계정 (읽기 전용 서비스 계정)
+    username: ${LDAP_BIND_DN:cn=svc-seatreserve,ou=serviceaccounts,dc=company,dc=com}
+    password: ${LDAP_BIND_PW:changeme}
+
+app:
+  ldap:
+    user-search-base: ${LDAP_USER_BASE:ou=people}
+    user-search-filter: ${LDAP_USER_FILTER:(sAMAccountName={0})}
+    group-search-base: ${LDAP_GROUP_BASE:ou=groups}
+    admin-group-dn: ${LDAP_ADMIN_GROUP:cn=seatreserve-admins,ou=groups,dc=company,dc=com}
+  cors:
+    allowed-origins: ${CORS_ORIGINS:http://localhost:3000}
+  session:
+    timeout-minutes: 480   # 8시간
+
+logging:
+  level:
+    com.seatreserve: INFO
+    org.springframework.security: WARN
+    org.springframework.ldap: WARN
