@@ -3,6 +3,7 @@ import { HomePage } from './pages/cfa/HomePage'
 import { StudyPage } from './pages/cfa/StudyPage'
 import { ReviewPage } from './pages/cfa/ReviewPage'
 import { MockExamPage } from './pages/cfa/MockExamPage'
+import { PlanPage } from './pages/cfa/PlanPage'
 
 export default function App() {
   return (
@@ -13,6 +14,7 @@ export default function App() {
         <Route path="/study/:topic" element={<StudyPage />} />
         <Route path="/review" element={<ReviewPage />} />
         <Route path="/mock" element={<MockExamPage />} />
+        <Route path="/plan" element={<PlanPage />} />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </HashRouter>
